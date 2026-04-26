@@ -54,3 +54,5 @@ export const feedInfoSlice = createSlice({
 
 export const { selectOrders, selectFeed, selectIsLoading, selectError } =
   feedInfoSlice.selectors;
+
+export default feedInfoSlice.reducer
