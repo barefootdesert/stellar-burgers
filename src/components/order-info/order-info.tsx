@@ -1,21 +1,37 @@
-import { FC, useMemo } from 'react';
-import { Preloader } from '../ui/preloader';
-import { OrderInfoUI } from '../ui/order-info';
+import { FC, useEffect, useMemo } from 'react';
+import { Preloader } from '@ui';
+import { OrderInfoUI } from '@ui';
 import { TIngredient } from '@utils-types';
+import { useDispatch, useSelector } from '../../services/store';
+import {
+  selectOrder,
+  selectIsLoading,
+  selectError,
+  clearOrderInfo
+} from '../../services/order-info/slice';
+import { selectItems } from '../../services/ingredient/slice';
+import { useParams } from 'react-router-dom';
+import { fetchOrderInfoThunk } from '../../services/order-info/actions';
 
 export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+  const orderData = useSelector(selectOrder);
+  const ingredients: TIngredient[] = useSelector(selectItems);
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
 
-  const ingredients: TIngredient[] = [];
+  const dispatch = useDispatch();
+  const { number } = useParams<{ number: string }>();
+  const orderNumber = Number(number);
+
+  useEffect(() => {
+    if (!number || Number.isNaN(orderNumber)) return;
+
+    dispatch(fetchOrderInfoThunk(orderNumber));
+
+    return () => {
+      dispatch(clearOrderInfo());
+    };
+  }, [dispatch, orderNumber, number]);
 
   /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
@@ -59,8 +75,12 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  if (!orderInfo) {
+  if (isLoading || !orderInfo) {
     return <Preloader />;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
   }
 
   return <OrderInfoUI orderInfo={orderInfo} />;
