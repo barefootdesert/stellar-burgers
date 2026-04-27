@@ -90,3 +90,5 @@ export const {
   selectIsLoading,
   selectError
 } = userProfileSlice.selectors;
+
+export default userProfileSlice.reducer

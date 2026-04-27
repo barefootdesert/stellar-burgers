@@ -45,3 +45,5 @@ export const userOrdersSlice = createSlice({
 export const { selectIsLoading, selectOrders, selectError } =
   userOrdersSlice.selectors;
 export const { resetUserOrders } = userOrdersSlice.actions;
+
+export default userOrdersSlice.reducer
