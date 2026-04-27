@@ -41,3 +41,4 @@ export const main2: TIngredient = {
   proteins: 300,
   type: 'main'
 };
+
